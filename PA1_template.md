@@ -21,10 +21,6 @@ fileDate <- data.frame(as.Date(strptime(fileData[, 2], "%Y-%m-%e")))
 fileCols <- colnames(fileData)
 fileData <- data.frame(fileData[, 1], fileDate, fileData[, 3])
 colnames(fileData) <- fileCols
-
-## setting NAs to be 0 as this is not handled in this part of the assignment
-processedFileData <- fileData
-processedFileData[is.na(processedFileData)] <- 0
 ```
 
 
@@ -32,8 +28,7 @@ processedFileData[is.na(processedFileData)] <- 0
 
 ```r
 ## sum the steps taken in each unique date
-sumData <- aggregate(processedFileData$steps, list(date = processedFileData$date), 
-    sum)
+sumData <- aggregate(fileData$steps, list(date = fileData$date), sum, na.rm = TRUE)
 ```
 
 
@@ -57,8 +52,8 @@ median(sumData$x,na.rm=TRUE)
 
 ```r
 ## calculating the average steps per interval
-averageData <- aggregate(processedFileData$steps, list(interval = processedFileData$interval), 
-    mean)
+averageData <- aggregate(fileData$steps, list(interval = fileData$interval), 
+    mean, na.rm = TRUE)
 ```
 
 The time series plot for the above aggregated data is shown below:-
@@ -75,7 +70,7 @@ The 5-minute interval, on average across all the days in the dataset, contains t
 ```
 averageData[which.max(averageData$x),1]
 ```
-The maximum number of steps is **179.1311**  using the below formula.
+The maximum number of steps is **206.1698**  using the below formula.
 ```
 averageData[which.max(averageData$x),2]
 ```
@@ -109,15 +104,15 @@ hist(sumData$x, col = "red", xlab = "Number of steps", main = "Total Number of S
 
 ![plot of chunk plot_updated_total_steps](figure/plot_updated_total_steps.png) 
 
-The **mean** total number of steps taken per day is **10581** using the below formula.
+The **mean** total number of steps taken per day is **10766** using the below formula.
 ```
 mean(sumData$x,na.rm=TRUE)
 ```
-The **median** total number of steps taken per day is **10395** using the below formula.
+The **median** total number of steps taken per day is **10766** using the below formula.
 ```
 median(sumData$x,na.rm=TRUE)
 ```
-The mean has increased as compared to the previous case when the NA values are ignored (treated as 0 for the purpose of aggregation). Since the total number of steps has increased after the imputting of missing data, this increase in the mean is expected. The median does not change because no new records were introduced. 
+Both the mean and the median has increased from the previous values.They have also converged to the same value. 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 A new factor is created for the dates to define weekday and weekend as two levels. This is done using the code below.
@@ -149,4 +144,4 @@ xyplot(wdayAverageData$x ~ wdayAverageData$interval | wdayAverageData$wday,
 
 ![plot of chunk plot_weekday_average_steps](figure/plot_weekday_average_steps.png) 
 
-Both activity plots look generally the same except that the peak for the weekday is higher than the weekend.
+There are differences between the weekday and weekend activity plots. The peak number of steps for the weekday plot is higher than the weekend plot. 

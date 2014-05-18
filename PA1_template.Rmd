@@ -20,16 +20,12 @@ fileDate <- data.frame(as.Date(strptime(fileData[,2],"%Y-%m-%e")))
 fileCols <- colnames(fileData)
 fileData <- data.frame(fileData[,1],fileDate,fileData[,3])
 colnames(fileData) <- fileCols
-
-## setting NAs to be 0 as this is not handled in this part of the assignment
-processedFileData <- fileData
-processedFileData[is.na(processedFileData)] <- 0
 ```
 
 ## What is mean total number of steps taken per day?
 ```{r}
 ## sum the steps taken in each unique date
-sumData <- aggregate(processedFileData$steps,list(date=processedFileData$date),sum)
+sumData <- aggregate(fileData$steps,list(date=fileData$date),sum,na.rm=TRUE)
 ```
 ```{r plot_total_steps}
 ## display histogram of the total number of steps taken each day
@@ -47,7 +43,7 @@ median(sumData$x,na.rm=TRUE)
 ## What is the average daily activity pattern?
 ```{r}
 ## calculating the average steps per interval
-averageData <- aggregate(processedFileData$steps,list(interval=processedFileData$interval),mean)
+averageData <- aggregate(fileData$steps,list(interval=fileData$interval),mean,na.rm=TRUE)
 ```
 The time series plot for the above aggregated data is shown below:-
 ```{r plot_average_steps}
@@ -92,7 +88,7 @@ The **median** total number of steps taken per day is **`r format(median(sumData
 ```
 median(sumData$x,na.rm=TRUE)
 ```
-The mean has increased as compared to the previous case when the NA values are ignored (treated as 0 for the purpose of aggregation). Since the total number of steps has increased after the imputting of missing data, this increase in the mean is expected. The median does not change because no new records were introduced. 
+Both the mean and the median has increased from the previous values.They have also converged to the same value. 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 A new factor is created for the dates to define weekday and weekend as two levels. This is done using the code below.
@@ -113,4 +109,4 @@ This is the time series plot of the 5-minute interval (x-axis) and the average n
 require(lattice)
 xyplot(wdayAverageData$x~wdayAverageData$interval|wdayAverageData$wday,type="l",layout=c(1,2),xlab="Number of steps",ylab="Interval")
 ```
-Both activity plots look generally the same except that the peak for the weekday is higher than the weekend.
+There are differences between the weekday and weekend activity plots. The peak number of steps for the weekday plot is higher than the weekend plot. 
